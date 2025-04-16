@@ -12,7 +12,7 @@
     <description>
         Worker service that provides the ability to execute tasks by the same key on the same thread
     </description>
-    <url>https://github.com/ViacheslavBondarchuk/workers/</url>
+    <url>https://viacheslavbondarchuk.github.io/workers/</url>
 
     <developers>
         <developer>
