@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 public interface WorkerService extends AutoCloseable, Closeable {
 
     /**
-     * Executes task and returns CompletableFuture<?>
+     * Executes task and returns CompletableFuture
      *
      * @param key      - A task distribution key
      * @param runnable - A task that will be executed on the selected worker by key
@@ -20,7 +20,7 @@ public interface WorkerService extends AutoCloseable, Closeable {
     }
 
     /**
-     * Executes task and returns CompletableFuture<?>
+     * Executes task and returns CompletableFuture
      *
      * @param key        - A task distribution key
      * @param runnable   - A task that will be executed on the selected worker by key
@@ -30,7 +30,7 @@ public interface WorkerService extends AutoCloseable, Closeable {
     CompletableFuture<Void> execute(String key, Runnable runnable, Map<String, Object> attributes);
 
     /**
-     * Executes task and returns CompletableFuture<?>
+     * Executes task and returns CompletableFuture
      *
      * @param key      - A task distribution key
      * @param callable - A task that will be executed on the selected worker by key
@@ -43,7 +43,7 @@ public interface WorkerService extends AutoCloseable, Closeable {
 
 
     /**
-     * Executes task and returns CompletableFuture<?>
+     * Executes task and returns CompletableFuture
      *
      * @param key        - A task distribution key
      * @param callable   - A task that will be executed on the selected worker by key
