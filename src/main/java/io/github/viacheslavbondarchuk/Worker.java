@@ -1,27 +1,37 @@
 package io.github.viacheslavbondarchuk;
 
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.LockSupport;
 
-import static io.github.viacheslavbondarchuk.WorkerTaskCompletionStatus.CANCELLED;
-import static io.github.viacheslavbondarchuk.WorkerTaskCompletionStatus.ERROR;
-import static io.github.viacheslavbondarchuk.WorkerTaskCompletionStatus.SUCCESS;
+import static io.github.viacheslavbondarchuk.MetricService.WORKER_FINISHED_TASKS_COUNT;
+import static io.github.viacheslavbondarchuk.MetricService.WORKER_TASK_EXECUTION_TIME;
+import static io.github.viacheslavbondarchuk.MetricService.WORKER_TASK_QUEUE_SIZE;
+import static io.github.viacheslavbondarchuk.TaskStatus.CANCELLED;
+import static io.github.viacheslavbondarchuk.TaskStatus.ERROR;
+import static io.github.viacheslavbondarchuk.TaskStatus.SUCCESS;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 final class Worker extends Thread {
     private final AtomicBoolean alive = new AtomicBoolean(true);
     private final AtomicBoolean parked = new AtomicBoolean(false);
     private final Queue<WorkerTask<?>> queue = new ConcurrentLinkedQueue<>();
-    private final OnWorkerTaskCompletion listener;
+    private final LongAdder tasksCount = new LongAdder();
 
-    Worker(String name, ThreadGroup group, OnWorkerTaskCompletion listener) {
+    private final MetricService metrics;
+
+    Worker(String name, ThreadGroup group, MetricService metrics) {
         super(group, name);
-        this.listener = listener;
-        start();
+        this.metrics = metrics;
+        this.start();
+        this.init();
+    }
+
+    private void init() {
+        metrics.gauge(WORKER_TASK_QUEUE_SIZE, getName(), tasksCount, LongAdder::doubleValue);
     }
 
     private void park() {
@@ -45,42 +55,29 @@ final class Worker extends Thread {
     void execute(WorkerTask<?> task) {
         assert alive.get() : "Worker is dead";
         queue.offer(task);
+        tasksCount.increment();
         unpark();
     }
 
-    private void onComplete(String key, Exception ex, WorkerTaskCompletionStatus status, Map<String, Object> attributes) {
-        if (listener != null) {
-            switch (status) {
-                case SUCCESS:
-                    listener.onSuccess(key, getName(), attributes);
-                    break;
-                case CANCELLED:
-                    listener.onCancel(key, getName(), attributes);
-                    break;
-                case ERROR:
-                    listener.onError(key, getName(), ex, attributes);
-                    break;
-            }
-        }
-    }
-
     private void _execute(WorkerTask task) {
+        metrics.startTimer(WORKER_TASK_EXECUTION_TIME, getName(), task.getKey());
         CompletableFuture future = task.getCompletableFuture();
         if (!future.isCancelled()) {
             try {
                 future.complete(task.execute());
-                onComplete(task.getKey(), null, SUCCESS, task.getAttributes());
+                metrics.incrementTaskCount(WORKER_FINISHED_TASKS_COUNT, getName(), task.getKey(), SUCCESS);
             } catch (InterruptedException ie) {
-                Workers.handleInterruptException(ie);
+                WorkerUtil.handleInterruptException(ie);
                 future.completeExceptionally(ie);
-                onComplete(task.getKey(), ie, ERROR, task.getAttributes());
+                metrics.incrementTaskCount(WORKER_FINISHED_TASKS_COUNT, getName(), task.getKey(), ERROR);
             } catch (Exception ex) {
                 future.completeExceptionally(ex);
-                onComplete(task.getKey(), ex, ERROR, task.getAttributes());
+                metrics.incrementTaskCount(WORKER_FINISHED_TASKS_COUNT, getName(), task.getKey(), ERROR);
             }
         } else {
-            onComplete(task.getKey(), null, CANCELLED, task.getAttributes());
+            metrics.incrementTaskCount(WORKER_FINISHED_TASKS_COUNT, getName(), task.getKey(), CANCELLED);
         }
+        metrics.stopTimer(task.getKey());
     }
 
     @Override
@@ -88,6 +85,7 @@ final class Worker extends Thread {
         while (alive.get()) {
             WorkerTask<?> task = queue.poll();
             if (task != null) {
+                tasksCount.decrement();
                 _execute(task);
                 continue;
             }
