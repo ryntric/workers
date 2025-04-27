@@ -11,13 +11,17 @@ interface MetricService {
     String WORKER_FINISHED_TASKS_COUNT = "worker_finished_tasks_count";
     String WORKER_TASK_QUEUE_SIZE = "worker_task_queue_size";
     String WORKER_SERVICE_NAME = "worker_service_name";
+    String WORKER_TASK_NAME = "worker_task_name";
+    String WORKER_EXECUTION_TIME_LATENCY = "worker_execution_task_latency";
 
-    void incrementTaskCount(String name, String workerName, String key, TaskStatus status);
+    void incrementTaskCount(String name, CompletionTaskStatus status, MetricContext context);
 
-    void startTimer(String name, String workerName, String key);
+    void startTimer(String name, MetricContext context);
 
-    void stopTimer(String key);
+    void stopTimer(MetricContext context);
 
-    <T> void gauge(String name, String workerName, T state, ToDoubleFunction<T> function);
+    void recordLatency(String name, long latencyNs, MetricContext context);
+
+    <T> void gauge(String name, T state, ToDoubleFunction<T> function, MetricContext context);
 
 }

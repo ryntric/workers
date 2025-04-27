@@ -7,6 +7,7 @@ import io.micrometer.core.instrument.Timer;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.ToDoubleFunction;
 
 final class MicrometerMetricService implements MetricService {
@@ -20,34 +21,48 @@ final class MicrometerMetricService implements MetricService {
         this.workerServiceName = workerServiceName;
     }
 
-    private Tags getTags(String workerName, String key) {
-        return Tags.of(WORKER_NAME, workerName, WORKER_TASK_KEY, key, WORKER_SERVICE_NAME, workerServiceName);
+    private Tags getTags(MetricContext context) {
+        Tags tags = Tags.of(WORKER_NAME, context.getWorkerName(), WORKER_TASK_KEY, context.getTaskKey(), WORKER_SERVICE_NAME, workerServiceName);
+        if (context.getTaskName() != null) {
+            tags.and(WORKER_TASK_NAME, context.getTaskName());
+        }
+        return tags;
     }
 
     @Override
-    public void incrementTaskCount(String name, String workerName, String key, TaskStatus status) {
-        Tags tags = getTags(workerName, key).and(WORKER_TASK_COMPLETION_STATUS, status.name());
+    public void incrementTaskCount(String name, CompletionTaskStatus status, MetricContext context) {
+        Tags tags = getTags(context).and(WORKER_TASK_COMPLETION_STATUS, status.name());
         Counter counter = registry.counter(name, tags);
         counter.increment();
     }
 
     @Override
-    public void startTimer(String name, String workerName, String key) {
+    public void startTimer(String name, MetricContext context) {
         Timer.Sample sample = Timer.start(registry);
-        Tags tags = getTags(workerName, key);
-        MetricTimerContext context = new MetricTimerContext(name, tags, sample);
-        metricTimerContexts.put(key, context);
+        Tags tags = getTags(context);
+        MetricTimerContext timerContext = new MetricTimerContext(name, tags, sample);
+        metricTimerContexts.put(context.getTaskKey(), timerContext);
     }
 
     @Override
-    public void stopTimer(String key) {
-        MetricTimerContext context = metricTimerContexts.remove(key);
-        context.stop(registry);
+    public void stopTimer(MetricContext context) {
+        MetricTimerContext timerContext = metricTimerContexts.remove(context.getTaskKey());
+        if (timerContext != null) {
+            timerContext.stop(registry);
+        }
     }
 
     @Override
-    public <T> void gauge(String name, String workerName, T state, ToDoubleFunction<T> function) {
-        Tags tags = Tags.of(WORKER_NAME, workerName, WORKER_SERVICE_NAME, workerServiceName);
+    public void recordLatency(String name, long latencyNs, MetricContext context) {
+        Timer.builder(name)
+                .tags(getTags(context))
+                .register(registry)
+                .record(latencyNs, TimeUnit.NANOSECONDS);
+    }
+
+    @Override
+    public <T> void gauge(String name, T state, ToDoubleFunction<T> function, MetricContext context) {
+        Tags tags = Tags.of(WORKER_NAME, context.getWorkerName(), WORKER_SERVICE_NAME, workerServiceName);
         registry.gauge(name, tags, state, function);
     }
 

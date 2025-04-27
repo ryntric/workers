@@ -1,11 +1,17 @@
 package io.github.viacheslavbondarchuk;
 
-import java.util.concurrent.CompletableFuture;
-
 interface WorkerTask<R> {
     R execute() throws Exception;
 
     String getKey();
 
-    CompletableFuture<R> getCompletableFuture();
+    Long getCreatedAtNs();
+
+    String getName();
+
+    void complete(R result);
+
+    void completeExceptionally(Throwable ex);
+
+    boolean isCancelled();
 }

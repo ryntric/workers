@@ -11,24 +11,30 @@ final class NoopMetricService implements MetricService {
     }
 
     @Override
-    public void incrementTaskCount(String name, String workerName, String key, TaskStatus status) {
+    public void incrementTaskCount(String name, CompletionTaskStatus status, MetricContext context) {
 
     }
 
     @Override
-    public void startTimer(String name, String workerName, String key) {
+    public void startTimer(String name, MetricContext context) {
 
     }
 
     @Override
-    public void stopTimer(String key) {
+    public void stopTimer(MetricContext context) {
 
     }
 
     @Override
-    public <T> void gauge(String name, String workerName, T state, ToDoubleFunction<T> function) {
+    public void recordLatency(String name, long latencyNs, MetricContext context) {
 
     }
+
+    @Override
+    public <T> void gauge(String name, T state, ToDoubleFunction<T> function, MetricContext context) {
+
+    }
+
 
     private static class InstanceHolder {
         private static final NoopMetricService INSTANCE = new NoopMetricService();

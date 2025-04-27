@@ -6,7 +6,11 @@ final class VoidTask extends AbstractWorkerTask<Void> {
     private final Runnable runnable;
 
     VoidTask(String key, CompletableFuture<Void> future, Runnable runnable) {
-        super(key, future);
+        this(key, future, runnable, null);
+    }
+
+    VoidTask(String key, CompletableFuture<Void> future, Runnable runnable, String name) {
+        super(key, future, name);
         this.runnable = runnable;
     }
 
