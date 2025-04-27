@@ -1,44 +1,28 @@
 ## Worker Service
 
-The Worker Service - provides the ability to execute tasks by the same key on the same thread.
+Workers - the library that provides an ability to execute tasks by the same key on the same thread.
+This library is based on the [Disruptor](https://lmax-exchange.github.io/disruptor/),
+each worker is the separated Disruptor with own task buffer.  
 
-When is this library helpful!?
-When you have to handle a lot of real-time events from a message broker or tasks without using locks and extra synchronization.
+When is this library helpful!? When you have to handle a lot of real-time events from a message broker or tasks without using locks and extra synchronization.
 
 An example of usage:
 
-```
-OnWorkerTaskCompletion onWorkerTaskCompletion = new OnWorkerTaskCompletion() {
-            private final Map<String, LongAdder> counters = new ConcurrentHashMap<>();
-            private final LongSummaryStatistics statistics = new LongSummaryStatistics();
+```java
+private static final Runnable task = () -> System.out.printf("Worker %s doing something%n", Thread.currentThread().getName());
+private static final WorkerServiceConfig config = WorkerServiceConfig.builder()
+        .name("test-service")
+        .replicaCount(2000)
+        .bufferSize(8192)
+        .build();
 
-            private void increment(String workerName, Map<String, Object> attributes) {
-                counters.computeIfAbsent(workerName, k -> new LongAdder()).increment();
-                statistics.accept(Workers.<Long>getTaskAttribute(attributes, WorkerTaskAttributes.COMPLETED_AT) - Workers.<Long>getTaskAttribute(attributes, WorkerTaskAttributes.STARTED_AT));
-            }
-
-            @Override
-            public void onSuccess(String key, String workerName, Map<String, Object> attributes) {
-                increment(workerName, attributes);
-            }
-
-            @Override
-            public void onCancel(String key, String workerName, Map<String, Object> attributes) {
-                increment(workerName, attributes);
-            }
-
-            @Override
-            public void onError(String key, String workerName, Exception ex, Map<String, Object> attributes) {
-                increment(workerName, attributes);
-            }
-        };
-        
-Runnable task = () -> System.out.println("Doing something");    
-
-try (WorkerService workerService = Workers.newWorkerService("test", 4, 400, Hashing.murmur3_32_fixed(), onWorkerTaskCompletion)) {
-    CompletableFuture<?>[] futures = IntStream.range(0, 100_000_000)
-        .mapToObj(i -> workerService.execute(String.valueOf(UUID.randomUUID()), task))
-        .toArray(CompletableFuture[]::new);
-    CompletableFuture.allOf(futures).join();
+public static void main(String[] args) {
+    try (DisruptorWorkerService workerService = new DisruptorWorkerService(config)) {
+        CompletableFuture<?>[] futures = IntStream.range(0, 5_000_000)
+                .parallel()
+                .mapToObj(ignored -> workerService.execute(String.valueOf(UUID.randomUUID()), task))
+                .toArray(CompletableFuture<?>[]::new);
+        CompletableFuture.allOf(futures).join();
+    }
 }
 ```

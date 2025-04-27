@@ -2,13 +2,17 @@ package io.github.viacheslavbondarchuk;
 
 import java.util.concurrent.CompletableFuture;
 
-public abstract class AbstractWorkerTask<R> implements WorkerTask<R> {
+abstract class AbstractWorkerTask<R> implements WorkerTask<R> {
+    private final Long createdAtNs = System.nanoTime();
+
     private final CompletableFuture<R> future;
     private final String key;
+    private final String name;
 
-    public AbstractWorkerTask(String key, CompletableFuture<R> future) {
+    AbstractWorkerTask(String key, CompletableFuture<R> future, String name) {
         this.key = key;
         this.future = future;
+        this.name = name;
     }
 
     @Override
@@ -17,8 +21,27 @@ public abstract class AbstractWorkerTask<R> implements WorkerTask<R> {
     }
 
     @Override
-    public CompletableFuture<R> getCompletableFuture() {
-        return future;
+    public Long getCreatedAtNs() {
+        return createdAtNs;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return future.isCancelled();
+    }
+
+    @Override
+    public void complete(R result) {
+        future.complete(result);
+    }
+
+    @Override
+    public void completeExceptionally(Throwable ex) {
+        future.completeExceptionally(ex);
+    }
 }

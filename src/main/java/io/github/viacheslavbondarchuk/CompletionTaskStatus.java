@@ -1,6 +1,6 @@
 package io.github.viacheslavbondarchuk;
 
-enum TaskStatus {
+enum CompletionTaskStatus {
     SUCCESS,
     CANCELLED,
     ERROR
