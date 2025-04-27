@@ -5,7 +5,7 @@ interface WorkerTask<R> {
 
     String getKey();
 
-    Long getCreatedAtNs();
+    Long getCreatedAt();
 
     String getName();
 

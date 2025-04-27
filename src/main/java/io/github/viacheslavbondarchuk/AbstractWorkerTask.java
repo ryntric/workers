@@ -3,7 +3,7 @@ package io.github.viacheslavbondarchuk;
 import java.util.concurrent.CompletableFuture;
 
 abstract class AbstractWorkerTask<R> implements WorkerTask<R> {
-    private final Long createdAtNs = System.nanoTime();
+    private final Long createdAt = ClockUtil.inMillis();
 
     private final CompletableFuture<R> future;
     private final String key;
@@ -21,8 +21,8 @@ abstract class AbstractWorkerTask<R> implements WorkerTask<R> {
     }
 
     @Override
-    public Long getCreatedAtNs() {
-        return createdAtNs;
+    public Long getCreatedAt() {
+        return createdAt;
     }
 
     @Override

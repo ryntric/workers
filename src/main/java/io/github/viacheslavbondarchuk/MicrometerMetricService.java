@@ -53,11 +53,9 @@ final class MicrometerMetricService implements MetricService {
     }
 
     @Override
-    public void recordLatency(String name, long latencyNs, MetricContext context) {
-        Timer.builder(name)
-                .tags(getTags(context))
-                .register(registry)
-                .record(latencyNs, TimeUnit.NANOSECONDS);
+    public void recordLatency(String name, long latency, MetricContext context) {
+        registry.timer(name, getTags(context))
+                .record(latency, TimeUnit.MILLISECONDS);
     }
 
     @Override

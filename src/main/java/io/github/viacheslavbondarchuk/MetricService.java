@@ -20,7 +20,7 @@ interface MetricService {
 
     void stopTimer(MetricContext context);
 
-    void recordLatency(String name, long latencyNs, MetricContext context);
+    void recordLatency(String name, long latency, MetricContext context);
 
     <T> void gauge(String name, T state, ToDoubleFunction<T> function, MetricContext context);
 
