@@ -24,7 +24,7 @@ final class MicrometerMetricService implements MetricService {
     private Tags getTags(MetricContext context) {
         Tags tags = Tags.of(WORKER_NAME, context.getWorkerName(), WORKER_TASK_KEY, context.getTaskKey(), WORKER_SERVICE_NAME, workerServiceName);
         if (context.getTaskName() != null) {
-            tags.and(WORKER_TASK_NAME, context.getTaskName());
+            tags = tags.and(WORKER_TASK_NAME, context.getTaskName());
         }
         return tags;
     }
