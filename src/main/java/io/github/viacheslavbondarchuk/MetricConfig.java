@@ -23,7 +23,7 @@ class MetricConfig {
     }
 
     void disableTag(MetricTagName name) {
-        MetricConfig.this.features ^= name.flag();
+        MetricConfig.this.features &= (byte) ~name.flag();
     }
 
     void enableTag(MetricTagName name) {
