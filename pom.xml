@@ -6,11 +6,11 @@
 
     <groupId>io.github.viacheslavbondarchuk</groupId>
     <artifactId>workers</artifactId>
-    <version>2.0.2</version>
+    <version>2.0.3</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Worker service that provides the ability to execute tasks by the same key on the same thread
+    <description>Worker service that provides an ability to execute tasks by the same key on the same thread
     </description>
     <url>https://viacheslavbondarchuk.github.io/workers/</url>
     <licenses>
