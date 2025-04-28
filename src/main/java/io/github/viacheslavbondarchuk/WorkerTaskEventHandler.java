@@ -5,9 +5,9 @@ import com.lmax.disruptor.EventHandler;
 import static io.github.viacheslavbondarchuk.CompletionTaskStatus.CANCELLED;
 import static io.github.viacheslavbondarchuk.CompletionTaskStatus.ERROR;
 import static io.github.viacheslavbondarchuk.CompletionTaskStatus.SUCCESS;
-import static io.github.viacheslavbondarchuk.MetricService.WORKER_EXECUTION_TIME_LATENCY;
-import static io.github.viacheslavbondarchuk.MetricService.WORKER_FINISHED_TASKS_COUNT;
-import static io.github.viacheslavbondarchuk.MetricService.WORKER_TASK_EXECUTION_TIME;
+import static io.github.viacheslavbondarchuk.MetricName.WORKER_EXECUTION_TIME_LATENCY;
+import static io.github.viacheslavbondarchuk.MetricName.WORKER_FINISHED_TASKS_COUNT;
+import static io.github.viacheslavbondarchuk.MetricName.WORKER_TASK_EXECUTION_TIME;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 final class WorkerTaskEventHandler implements EventHandler<WorkerTaskEvent> {
