@@ -1,7 +1,5 @@
 package io.github.viacheslavbondarchuk;
 
-import java.util.function.ToDoubleFunction;
-
 final class NoopMetricService implements MetricService {
     private NoopMetricService() {}
 
@@ -11,12 +9,12 @@ final class NoopMetricService implements MetricService {
     }
 
     @Override
-    public void incrementTaskCount(String name, CompletionTaskStatus status, MetricContext context) {
+    public void incrementTaskCount(MetricName name, CompletionTaskStatus status, MetricContext context) {
 
     }
 
     @Override
-    public void startTimer(String name, MetricContext context) {
+    public void startTimer(MetricName name, MetricContext context) {
 
     }
 
@@ -26,15 +24,9 @@ final class NoopMetricService implements MetricService {
     }
 
     @Override
-    public void recordLatency(String name, long latencyNs, MetricContext context) {
+    public void recordLatency(MetricName name, long latency, MetricContext context) {
 
     }
-
-    @Override
-    public <T> void gauge(String name, T state, ToDoubleFunction<T> function, MetricContext context) {
-
-    }
-
 
     private static class InstanceHolder {
         private static final NoopMetricService INSTANCE = new NoopMetricService();

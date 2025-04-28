@@ -27,7 +27,7 @@ public final class DisruptorWorkerService extends WorkerService {
     }
 
     private void init() {
-        MetricService metrics = MetricServiceFactory.getMetricService(config);
+        MetricService metrics = MetricServiceFactory.getMetricService(config.getName(), config.getMetricConfig());
         WorkerThreadFactory threadFactory = new WorkerThreadFactory(config.getName());
         DisruptorFactory df = new DisruptorFactory(threadFactory, metrics, config.getWaitStrategy(), config.getBufferSize());
 
