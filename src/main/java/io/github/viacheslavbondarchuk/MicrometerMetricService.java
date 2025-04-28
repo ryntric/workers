@@ -34,17 +34,17 @@ final class MicrometerMetricService implements MetricService {
     }
 
     @Override
-    public void incrementTaskCount(MetricName name, CompletionTaskStatus status, MetricContext context) {
+    public void incrementTaskCount(MetricName metricName, CompletionTaskStatus status, MetricContext context) {
         Tags tags = getTagCompositor(context).add(WORKER_TASK_COMPLETION_STATUS, status.name()).tags();
-        Counter counter = metricConfig.getMeterRegistry().counter(name.toString(), tags);
+        Counter counter = metricConfig.getMeterRegistry().counter(metricName.value(), tags);
         counter.increment();
     }
 
     @Override
-    public void startTimer(MetricName name, MetricContext context) {
+    public void startTimer(MetricName metricName, MetricContext context) {
         Timer.Sample sample = Timer.start(metricConfig.getMeterRegistry());
         Tags tags = getTagCompositor(context).tags();
-        MetricTimerContext timerContext = new MetricTimerContext(name, tags, sample);
+        MetricTimerContext timerContext = new MetricTimerContext(metricName, tags, sample);
         metricTimerContexts.put(context.getTaskKey(), timerContext);
     }
 
@@ -57,9 +57,9 @@ final class MicrometerMetricService implements MetricService {
     }
 
     @Override
-    public void recordLatency(MetricName name, long latency, MetricContext context) {
+    public void recordLatency(MetricName metricName, long latency, MetricContext context) {
         metricConfig.getMeterRegistry()
-                .timer(name.value(), getTagCompositor(context).tags())
+                .timer(metricName.value(), getTagCompositor(context).tags())
                 .record(latency, TimeUnit.MILLISECONDS);
     }
 

@@ -6,18 +6,18 @@ import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 
 final class MetricTimerContext {
-    private final MetricName name;
+    private final MetricName metricName;
     private final Tags tags;
     private final Timer.Sample sample;
 
-    MetricTimerContext(MetricName name, Tags tags, Timer.Sample sample) {
-        this.name = name;
+    MetricTimerContext(MetricName metricName, Tags tags, Timer.Sample sample) {
+        this.metricName = metricName;
         this.tags = tags;
         this.sample = sample;
     }
 
     void stop(MeterRegistry registry) {
-        sample.stop(registry.timer(name.value(), tags));
+        sample.stop(registry.timer(metricName.value(), tags));
     }
 
 }
