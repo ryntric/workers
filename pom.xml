@@ -4,15 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.viacheslavbondarchuk</groupId>
+    <groupId>io.github.ryntric</groupId>
     <artifactId>workers</artifactId>
-    <version>2.0.3</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Worker service that provides an ability to execute tasks by the same key on the same thread
-    </description>
-    <url>https://viacheslavbondarchuk.github.io/workers/</url>
+    <description>Workers — a library that provides an ability to execute tasks by the same key on the same thread</description>
+    <url>https://ryntric.github.io/workers/</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -21,14 +20,14 @@
     </licenses>
     <developers>
         <developer>
-            <name>ViacheslavBondarchuk</name>
-            <email>viacheslav.bondarchuk.k@gmail.com</email>
+            <name>ryntric</name>
+            <email>io.github.ryntric@gmail.com</email>
         </developer>
     </developers>
     <scm>
-        <url>https://github.com/ViacheslavBondarchuk/workers/</url>
-        <connection>scm:git:git://github.com/ViacheslavBondarchuk/workers.git</connection>
-        <developerConnection>scm:git:ssh://github.com/ViacheslavBondarchuk/workers.git</developerConnection>
+        <url>https://github.com/ryntric/workers/</url>
+        <connection>scm:git:git://github.com/ryntric/workers.git</connection>
+        <developerConnection>scm:git:ssh://github.com/ryntric/workers.git</developerConnection>
     </scm>
 
     <distributionManagement>
@@ -54,9 +53,15 @@
         <micrometer-core.version>1.14.6</micrometer-core.version>
         <disruptor.version>4.0.0</disruptor.version>
         <junit-jupiter-engine.version>5.12.2</junit-jupiter-engine.version>
+        <java-uuid-generator.version>5.1.0</java-uuid-generator.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.uuid</groupId>
+            <artifactId>java-uuid-generator</artifactId>
+            <version>${java-uuid-generator.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
