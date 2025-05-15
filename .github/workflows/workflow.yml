@@ -1,0 +1,13 @@
+name: workflow.yml
+on:
+  pull_request_target:
+    types:
+      - closed
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run maven tests
+        run: mvn clean install
