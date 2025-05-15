@@ -1,4 +1,5 @@
 [![Maven test](https://github.com/ryntric/workers/actions/workflows/workflow.yml/badge.svg)](https://github.com/ryntric/workers/actions/workflows/workflow.yml)
+[![pages-build-deployment](https://github.com/ryntric/workers/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/ryntric/workers/actions/workflows/pages/pages-build-deployment)
 
 Workers — a library that provides an ability to execute tasks by the same key on the same thread
 What is a main purpose of this library? Provides a complete solution when you need to handle tasks by key without the overhead of locks and synchronization.
