@@ -1,5 +1,5 @@
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ryntric/workers/blob/master/LICENSE)
-[![Maven CI](https://github.com/ryntric/workers/actions/workflows/workflow.yml/badge.svg)](https://github.com/ryntric/workers/actions/workflows/maven-build.yml)
+[![Maven CI](https://github.com/ryntric/workers/actions/workflows/maven-build.yml/badge.svg)](https://github.com/ryntric/workers/actions/workflows/maven-build.yml)
 [![pages-build-deployment](https://github.com/ryntric/workers/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/ryntric/workers/actions/workflows/pages/pages-build-deployment)
 
 Workers — a library that provides an ability to execute tasks by the same key on the same thread
