@@ -56,12 +56,4 @@ public final class WorkerUtil {
         return WorkerUtil.getHashCode(hashFunction.hashBytes(key));
     }
 
-    /**
-     * Handles an interrupt exception
-     */
-    public static void handleInterruptException(InterruptedException ignored) {
-        Thread currentThread = Thread.currentThread();
-        currentThread.interrupt();
-    }
-
 }

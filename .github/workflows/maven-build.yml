@@ -1,4 +1,4 @@
-name: Maven test
+name: Maven CI
 on:
   pull_request_target:
     types:

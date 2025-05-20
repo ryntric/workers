@@ -2,7 +2,6 @@ package io.github.ryntric;
 
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.RandomBasedGenerator;
-import com.fasterxml.uuid.impl.TimeBasedGenerator;
 import com.lmax.disruptor.dsl.Disruptor;
 
 import java.util.List;
@@ -19,7 +18,7 @@ final class WorkerNodeFactory {
         int idx = 0;
         for (Disruptor<WorkerTaskEvent> worker : workers) {
             for (int i = 0; i < quantity; i++) {
-                consumer.accept(new WorkerNode(String.format(WORKER_NODE_NAME_TEMPLATE, generator.generate(), idx++), worker));
+                consumer.accept(new WorkerNode(String.format(WORKER_NODE_NAME_TEMPLATE, generator.generate(), idx++), worker.getRingBuffer()));
             }
         }
     }
