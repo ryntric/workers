@@ -188,8 +188,9 @@ class DisruptorWorkerServiceTest {
         LongAdder counter = new LongAdder();
         CompletableFuture<Void> future = workerService.tryExecute("test", newLongCounterTask(counter));
         Assertions.assertThrowsExactly(InsufficientCapacityException.class, () -> workerService.tryExecute("test", newLongCounterTask(counter)));
-        Assertions.assertEquals(1, counter.longValue());
+
         future.join();
+        Assertions.assertEquals(1, counter.longValue());
     }
 
     @Test
@@ -197,8 +198,9 @@ class DisruptorWorkerServiceTest {
         LongAdder counter = new LongAdder();
         CompletableFuture<Void> future = workerService.tryExecute(1, newLongCounterTask(counter));
         Assertions.assertThrowsExactly(InsufficientCapacityException.class, () -> workerService.tryExecute(1, newLongCounterTask(counter)));
-        Assertions.assertEquals(1, counter.longValue());
+
         future.join();
+        Assertions.assertEquals(1, counter.longValue());
     }
 
     @Test
@@ -206,8 +208,9 @@ class DisruptorWorkerServiceTest {
         LongAdder counter = new LongAdder();
         CompletableFuture<Void> future = workerService.tryExecute(1L, newLongCounterTask(counter));
         Assertions.assertThrowsExactly(InsufficientCapacityException.class, () -> workerService.tryExecute(1L, newLongCounterTask(counter)));
-        Assertions.assertEquals(1, counter.longValue());
+
         future.join();
+        Assertions.assertEquals(1, counter.longValue());
     }
 
     @Test
@@ -216,8 +219,9 @@ class DisruptorWorkerServiceTest {
         byte[] key = {0b1};
         CompletableFuture<Void> future = workerService.tryExecute(key, newLongCounterTask(counter));
         Assertions.assertThrowsExactly(InsufficientCapacityException.class, () -> workerService.tryExecute(key, newLongCounterTask(counter)));
-        Assertions.assertEquals(1, counter.longValue());
+
         future.join();
+        Assertions.assertEquals(1, counter.longValue());
     }
 
     @Test
