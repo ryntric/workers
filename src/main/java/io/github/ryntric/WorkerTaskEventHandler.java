@@ -43,5 +43,6 @@ final class WorkerTaskEventHandler implements EventHandler<WorkerTaskEvent> {
             metrics.incrementTaskCount(WORKER_FINISHED_TASKS_COUNT, CANCELLED, context);
         }
         metrics.stopTimer(metricTimerContext);
+        event.clear();
     }
 }

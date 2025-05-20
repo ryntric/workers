@@ -11,7 +11,7 @@ final class MetricTagCompositor {
     }
 
     public MetricTagCompositor add(MetricTagName tagName, String value) {
-        if (metricConfig.isTagEnabled(tagName) && value != null) {
+        if (value != null && metricConfig.isTagEnabled(tagName)) {
             this.tags = tags.and(tagName.value(), value);
         }
         return this;

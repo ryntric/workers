@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/github/license/ryntric/workers)](https://github.com/ryntric/workers/blob/master/LICENSE)
+[![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ryntric/workers/blob/master/LICENSE)
 [![Maven CI](https://github.com/ryntric/workers/actions/workflows/workflow.yml/badge.svg)](https://github.com/ryntric/workers/actions/workflows/workflow.yml)
 [![pages-build-deployment](https://github.com/ryntric/workers/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/ryntric/workers/actions/workflows/pages/pages-build-deployment)
 

@@ -4,6 +4,7 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.WaitStrategy;
+import com.lmax.disruptor.dsl.ProducerType;
 import io.micrometer.core.instrument.MeterRegistry;
 
 public final class WorkerServiceConfig {
@@ -13,6 +14,7 @@ public final class WorkerServiceConfig {
     private HashFunction hashFunction = Hashing.murmur3_32_fixed();
     private WaitStrategy waitStrategy = new BlockingWaitStrategy();
     private int bufferSize = 4096;
+    private ProducerType producerType = ProducerType.MULTI;
     private final MetricConfig metricConfig = new MetricConfig();
 
     private WorkerServiceConfig() {}
@@ -39,6 +41,10 @@ public final class WorkerServiceConfig {
 
     public int getBufferSize() {
         return bufferSize;
+    }
+
+    public ProducerType getProducerType() {
+        return producerType;
     }
 
     MetricConfig getMetricConfig() {
@@ -152,6 +158,17 @@ public final class WorkerServiceConfig {
             for (MetricTagName tag : tags) {
                 WorkerServiceConfig.this.metricConfig.disableTag(tag);
             }
+            return this;
+        }
+
+        /**
+         * Specifies type of producer, for detail information see {@link  ProducerType}
+         *
+         * @param producerType - type of producer
+         * @return this
+         */
+        public Builder producerType(ProducerType producerType) {
+            WorkerServiceConfig.this.producerType = producerType;
             return this;
         }
 

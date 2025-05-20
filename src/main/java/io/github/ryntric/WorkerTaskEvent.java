@@ -3,7 +3,7 @@ package io.github.ryntric;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("rawtypes")
-class WorkerTaskEvent {
+final class WorkerTaskEvent {
     private WorkerTask task;
     private CompletableFuture future;
 
@@ -25,5 +25,10 @@ class WorkerTaskEvent {
 
     boolean isCancelled() {
         return future.isCancelled();
+    }
+
+    void clear() {
+        this.task = null;
+        this.future = null;
     }
 }
