@@ -5,7 +5,6 @@ import com.fasterxml.uuid.impl.RandomBasedGenerator;
 import com.lmax.disruptor.dsl.Disruptor;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 final class WorkerNodeFactory {
     private static final String WORKER_NODE_NAME_TEMPLATE = "%s-vwn-%d";
@@ -13,14 +12,16 @@ final class WorkerNodeFactory {
 
     private WorkerNodeFactory() {}
 
-    public static void createAndConsume(List<Disruptor<WorkerTaskEvent>> workers, int quantity, Consumer<WorkerNode> consumer) {
+    static WorkerNode[] create(List<Disruptor<WorkerTaskEvent>> workers, int quantity) {
         RandomBasedGenerator generator = Generators.randomBasedGenerator();
+        WorkerNode[] nodes = new WorkerNode[quantity * workers.size()];
         int idx = 0;
         for (Disruptor<WorkerTaskEvent> worker : workers) {
             for (int i = 0; i < quantity; i++) {
-                consumer.accept(new WorkerNode(String.format(WORKER_NODE_NAME_TEMPLATE, generator.generate(), idx++), worker.getRingBuffer()));
+                nodes[idx++] = new WorkerNode(String.format(WORKER_NODE_NAME_TEMPLATE, generator.generate(), idx), worker.getRingBuffer());
             }
         }
+        return nodes;
     }
 
 }

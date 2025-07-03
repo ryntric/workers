@@ -20,4 +20,8 @@ final class MetricTagCompositor {
     public Tags tags() {
         return tags;
     }
+
+    public void clear() {
+        tags = Tags.empty();
+    }
 }

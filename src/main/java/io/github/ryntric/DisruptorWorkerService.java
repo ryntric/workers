@@ -7,15 +7,11 @@ import com.lmax.disruptor.dsl.ProducerType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NavigableMap;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class DisruptorWorkerService extends WorkerService {
     private final List<Disruptor<WorkerTaskEvent>> workers;
-    private final NavigableMap<Long, WorkerNode> nodes;
     private final String name;
     private final int workerCount;
     private final int replicaCount;
@@ -24,10 +20,11 @@ public final class DisruptorWorkerService extends WorkerService {
     private final ProducerType producerType;
     private final AtomicBoolean alive;
 
+    private WorkerNodeSelector selector;
+
     public DisruptorWorkerService(WorkerServiceConfig config) {
         checkConfig(config);
         this.workers = new ArrayList<>(config.getWorkerCount());
-        this.nodes = new TreeMap<>();
         this.alive = new AtomicBoolean(true);
         this.name = config.getName();
         this.workerCount = config.getWorkerCount();
@@ -49,7 +46,8 @@ public final class DisruptorWorkerService extends WorkerService {
             workers.add(disruptor);
         }
 
-        WorkerNodeFactory.createAndConsume(workers, replicaCount, node -> nodes.put(WorkerUtil.getKeyHash(node.getName(), hashFunction), node));
+        WorkerNode[] nodes = WorkerNodeFactory.create(workers, replicaCount);
+        selector = WorkerNodeSelectorFactory.create(nodes, config.getSelectorType(), hashFunction);
     }
 
     private void checkConfig(WorkerServiceConfig config) {
@@ -74,34 +72,20 @@ public final class DisruptorWorkerService extends WorkerService {
         }
     }
 
-    private <T> CompletableFuture<T> _execute(Long keyHashCode, AbstractWorkerTask<T> task) {
+    private <T> CompletableFuture<T> _execute(WorkerNode node, AbstractWorkerTask<T> task) {
         checkTask(task);
         checkLiveness();
-        WorkerNode node = getWorkerNode(keyHashCode);
         CompletableFuture<T> future = new CompletableFuture<>();
         node.execute(task, future);
         return future;
     }
 
-    private <T> CompletableFuture<T> _tryExecute(Long keyHashCode, AbstractWorkerTask<T> task) throws InsufficientCapacityException {
+    private <T> CompletableFuture<T> _tryExecute(WorkerNode node, AbstractWorkerTask<T> task) throws InsufficientCapacityException {
         checkTask(task);
         checkLiveness();
-        WorkerNode node = getWorkerNode(keyHashCode);
         CompletableFuture<T> future = new CompletableFuture<>();
         node.tryExecute(task, future);
         return future;
-    }
-
-    @Override
-    long getWorkerNodeId(Long keyHashCode) {
-        SortedMap<Long, WorkerNode> tailed = nodes.tailMap(keyHashCode);
-        return tailed.isEmpty() ? nodes.firstKey() : tailed.firstKey();
-    }
-
-    @Override
-    WorkerNode getWorkerNode(Long keyHashCode) {
-        long workerNodeId = getWorkerNodeId(keyHashCode);
-        return nodes.get(workerNodeId);
     }
 
     public String getName() {
@@ -120,82 +104,82 @@ public final class DisruptorWorkerService extends WorkerService {
 
     @Override
     public CompletableFuture<Void> execute(String key, RunnableTask task) {
-        return _execute(WorkerUtil.getKeyHash(key, hashFunction), task);
+        return _execute(selector.select(key), task);
     }
 
     @Override
-    public CompletableFuture<Void> execute(Integer key, RunnableTask task) {
-        return _execute(WorkerUtil.getKeyHash(key, hashFunction), task);
+    public CompletableFuture<Void> execute(int key, RunnableTask task) {
+        return _execute(selector.select(key), task);
     }
 
     @Override
-    public CompletableFuture<Void> execute(Long key, RunnableTask task) {
-        return _execute(WorkerUtil.getKeyHash(key, hashFunction), task);
+    public CompletableFuture<Void> execute(long key, RunnableTask task) {
+        return _execute(selector.select(key), task);
     }
 
     @Override
     public CompletableFuture<Void> execute(byte[] key, RunnableTask task) {
-        return _execute(WorkerUtil.getKeyHash(key, hashFunction), task);
+        return _execute(selector.select(key), task);
     }
 
     @Override
     public CompletableFuture<Void> tryExecute(String key, RunnableTask task) throws InsufficientCapacityException {
-        return _tryExecute(WorkerUtil.getKeyHash(key, hashFunction), task);
+        return _tryExecute(selector.select(key), task);
     }
 
     @Override
-    public CompletableFuture<Void> tryExecute(Integer key, RunnableTask task) throws InsufficientCapacityException {
-        return _tryExecute(WorkerUtil.getKeyHash(key, hashFunction), task);
+    public CompletableFuture<Void> tryExecute(int key, RunnableTask task) throws InsufficientCapacityException {
+        return _tryExecute(selector.select(key), task);
     }
 
     @Override
-    public CompletableFuture<Void> tryExecute(Long key, RunnableTask task) throws InsufficientCapacityException {
-        return _tryExecute(WorkerUtil.getKeyHash(key, hashFunction), task);
+    public CompletableFuture<Void> tryExecute(long key, RunnableTask task) throws InsufficientCapacityException {
+        return _tryExecute(selector.select(key), task);
     }
 
     @Override
     public CompletableFuture<Void> tryExecute(byte[] key, RunnableTask task) throws InsufficientCapacityException {
-        return _tryExecute(WorkerUtil.getKeyHash(key, hashFunction), task);
+        return _tryExecute(selector.select(key), task);
     }
 
     @Override
     public <T> CompletableFuture<T> execute(String key, CallableTask<T> task) {
-        return _execute(WorkerUtil.getKeyHash(key, hashFunction), task);
+        return _execute(selector.select(key), task);
     }
 
     @Override
-    public <T> CompletableFuture<T> execute(Integer key, CallableTask<T> task) {
-        return _execute(WorkerUtil.getKeyHash(key, hashFunction), task);
+    public <T> CompletableFuture<T> execute(int key, CallableTask<T> task) {
+        return _execute(selector.select(key), task);
     }
 
     @Override
-    public <T> CompletableFuture<T> execute(Long key, CallableTask<T> task) {
-        return _execute(WorkerUtil.getKeyHash(key, hashFunction), task);
+    public <T> CompletableFuture<T> execute(long key, CallableTask<T> task) {
+        return _execute(selector.select(key), task);
     }
 
     @Override
     public <T> CompletableFuture<T> execute(byte[] key, CallableTask<T> task) {
-        return _execute(WorkerUtil.getKeyHash(key, hashFunction), task);
+        return _execute(selector.select(key), task);
     }
 
     @Override
     public <T> CompletableFuture<T> tryExecute(String key, CallableTask<T> task) throws InsufficientCapacityException {
-        return _tryExecute(WorkerUtil.getKeyHash(key, hashFunction), task);
+        return _tryExecute(selector.select(key), task);
     }
 
     @Override
-    public <T> CompletableFuture<T> tryExecute(Integer key, CallableTask<T> task) throws InsufficientCapacityException {
-        return _tryExecute(WorkerUtil.getKeyHash(key, hashFunction), task);
+    public <T> CompletableFuture<T> tryExecute(int key, CallableTask<T> task) throws InsufficientCapacityException {
+        return _tryExecute(selector.select(key), task);
     }
 
     @Override
-    public <T> CompletableFuture<T> tryExecute(Long key, CallableTask<T> task) throws InsufficientCapacityException {
-        return _tryExecute(WorkerUtil.getKeyHash(key, hashFunction), task);
+    public <T> CompletableFuture<T> tryExecute(long key, CallableTask<T> task) throws InsufficientCapacityException {
+        return _tryExecute(selector.select(key), task);
     }
 
     @Override
     public <T> CompletableFuture<T> tryExecute(byte[] key, CallableTask<T> task) throws InsufficientCapacityException {
-        return _tryExecute(WorkerUtil.getKeyHash(key, hashFunction), task);
+        return _tryExecute(selector.select(key), task);
     }
 
     @Override

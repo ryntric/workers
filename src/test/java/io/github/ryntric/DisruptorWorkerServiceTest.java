@@ -70,31 +70,6 @@ class DisruptorWorkerServiceTest {
     }
 
     @Test
-    void getWorkerNodeId() {
-        String key = String.valueOf(UUID.randomUUID());
-
-        long result = IntStream.range(0, 1000)
-                .mapToLong(i -> workerService.getWorkerNodeId(WorkerUtil.getKeyHash(key, config.getHashFunction())))
-                .reduce((left, right) -> left ^ right)
-                .getAsLong();
-
-        Assertions.assertEquals(0, result);
-    }
-
-    @Test
-    void getWorkerNode() {
-        String key = String.valueOf(UUID.randomUUID());
-
-        long result = IntStream.range(0, 1000)
-                .mapToObj(workerNodeId -> workerService.getWorkerNode(WorkerUtil.getKeyHash(key, config.getHashFunction())))
-                .mapToLong(WorkerNode::hashCode)
-                .reduce((left, right) -> left ^ right)
-                .getAsLong();
-
-        Assertions.assertEquals(0, result);
-    }
-
-    @Test
     void executeVoidTaskThatThrowsException() {
         CompletableFuture<Void> future = workerService.execute(String.valueOf(UUID.randomUUID()), new RunnableTask() {
             @Override

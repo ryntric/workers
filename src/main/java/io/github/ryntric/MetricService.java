@@ -2,7 +2,9 @@ package io.github.ryntric;
 
 interface MetricService {
 
-    void incrementTaskCount(MetricName metricName, CompletionTaskStatus status, MetricContext context);
+    MetricContext newMetricContext(String workerName, String taskName);
+
+    void incrementTaskCount(MetricName metricName, MetricContext context);
 
     MetricTimerContext startTimer(MetricName metricName, MetricContext context);
 
