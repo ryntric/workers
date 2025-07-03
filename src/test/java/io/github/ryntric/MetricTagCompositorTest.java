@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import static io.github.ryntric.MetricTagName.WORKER_NAME;
 import static io.github.ryntric.MetricTagName.WORKER_SERVICE_NAME;
-import static io.github.ryntric.MetricTagName.WORKER_TASK_COMPLETION_STATUS;
 import static io.github.ryntric.MetricTagName.WORKER_TASK_NAME;
 
 class MetricTagCompositorTest {
@@ -18,13 +17,13 @@ class MetricTagCompositorTest {
             config.enableTag(tagName);
         }
 
-        Tags tags = new MetricTagCompositor(config).add(WORKER_NAME, WORKER_NAME.name())
+        Tags tags = new MetricTagCompositor(config)
+                .add(WORKER_NAME, WORKER_NAME.name())
                 .add(WORKER_SERVICE_NAME, WORKER_SERVICE_NAME.name())
                 .add(WORKER_TASK_NAME, WORKER_TASK_NAME.name())
-                .add(WORKER_TASK_COMPLETION_STATUS, WORKER_TASK_COMPLETION_STATUS.name())
                 .tags();
 
-        Assertions.assertEquals(4, tags.stream().count());
+        Assertions.assertEquals(3, tags.stream().count());
     }
 
     @Test
@@ -38,7 +37,6 @@ class MetricTagCompositorTest {
         Tags tags = new MetricTagCompositor(config).add(WORKER_NAME, WORKER_NAME.name())
                 .add(WORKER_SERVICE_NAME, WORKER_SERVICE_NAME.name())
                 .add(WORKER_TASK_NAME, WORKER_TASK_NAME.name())
-                .add(WORKER_TASK_COMPLETION_STATUS, WORKER_TASK_COMPLETION_STATUS.name())
                 .tags();
 
         Assertions.assertEquals(1, tags.stream().count());
@@ -56,7 +54,6 @@ class MetricTagCompositorTest {
                 .add(WORKER_NAME, WORKER_NAME.name())
                 .add(WORKER_SERVICE_NAME, WORKER_SERVICE_NAME.name())
                 .add(WORKER_TASK_NAME, WORKER_TASK_NAME.name())
-                .add(WORKER_TASK_COMPLETION_STATUS, WORKER_TASK_COMPLETION_STATUS.name())
                 .tags();
 
         Assertions.assertEquals(0, tags.stream().count());
@@ -73,10 +70,9 @@ class MetricTagCompositorTest {
         Tags tags = new MetricTagCompositor(config).add(WORKER_NAME, WORKER_NAME.name())
                 .add(WORKER_SERVICE_NAME, WORKER_SERVICE_NAME.name())
                 .add(WORKER_TASK_NAME, WORKER_TASK_NAME.name())
-                .add(WORKER_TASK_COMPLETION_STATUS, WORKER_TASK_COMPLETION_STATUS.name())
                 .tags();
 
-        Assertions.assertEquals(3, tags.stream().count());
+        Assertions.assertEquals(2, tags.stream().count());
         Assertions.assertTrue(tags.stream()
                 .noneMatch(tag -> tag.getKey().equals(WORKER_SERVICE_NAME.value())));
     }

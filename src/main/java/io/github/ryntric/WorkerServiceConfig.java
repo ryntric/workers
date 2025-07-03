@@ -15,6 +15,7 @@ public final class WorkerServiceConfig {
     private WaitStrategy waitStrategy = new BlockingWaitStrategy();
     private int bufferSize = 4096;
     private ProducerType producerType = ProducerType.MULTI;
+    private WorkerNodeSelectorType selectorType = WorkerNodeSelectorType.MODULO;
     private final MetricConfig metricConfig = new MetricConfig();
 
     private WorkerServiceConfig() {}
@@ -45,6 +46,10 @@ public final class WorkerServiceConfig {
 
     public ProducerType getProducerType() {
         return producerType;
+    }
+
+    public WorkerNodeSelectorType getSelectorType() {
+        return selectorType;
     }
 
     MetricConfig getMetricConfig() {
@@ -169,6 +174,17 @@ public final class WorkerServiceConfig {
          */
         public Builder producerType(ProducerType producerType) {
             WorkerServiceConfig.this.producerType = producerType;
+            return this;
+        }
+
+        /**
+         * Specifies type of selector
+         *
+         * @param selectorType - an enum value that specifies selector type
+         * @return this
+         */
+        public Builder selectorType(WorkerNodeSelectorType selectorType) {
+            WorkerServiceConfig.this.selectorType = selectorType;
             return this;
         }
 

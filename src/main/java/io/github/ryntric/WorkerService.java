@@ -8,10 +8,6 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class WorkerService implements AutoCloseable, Closeable {
 
-    abstract long getWorkerNodeId(Long keyHashCode);
-
-    abstract WorkerNode getWorkerNode(Long keyHashCode);
-
     /**
      * @return name of this worker service
      */
@@ -39,14 +35,14 @@ public abstract class WorkerService implements AutoCloseable, Closeable {
      * @param task task that will be executed on the selected worker by key
      * @return @return {@link  java.util.concurrent.CompletableFuture}
      */
-    public abstract CompletableFuture<Void> execute(Integer key, RunnableTask task);
+    public abstract CompletableFuture<Void> execute(int key, RunnableTask task);
 
     /**
      * @param key  task distribution key
      * @param task task that will be executed on the selected worker by key
      * @return @return {@link  java.util.concurrent.CompletableFuture}
      */
-    public abstract CompletableFuture<Void> execute(Long key, RunnableTask task);
+    public abstract CompletableFuture<Void> execute(long key, RunnableTask task);
 
     /**
      * @param key  task distribution key
@@ -69,7 +65,7 @@ public abstract class WorkerService implements AutoCloseable, Closeable {
      * @return @return {@link  java.util.concurrent.CompletableFuture}
      * @throws InsufficientCapacityException when <code>RingBuffer</code> is full
      */
-    public abstract CompletableFuture<Void> tryExecute(Integer key, RunnableTask task) throws InsufficientCapacityException;
+    public abstract CompletableFuture<Void> tryExecute(int key, RunnableTask task) throws InsufficientCapacityException;
 
     /**
      * @param key  task distribution key
@@ -77,7 +73,7 @@ public abstract class WorkerService implements AutoCloseable, Closeable {
      * @return @return {@link  java.util.concurrent.CompletableFuture}
      * @throws InsufficientCapacityException when <code>RingBuffer</code> is full
      */
-    public abstract CompletableFuture<Void> tryExecute(Long key, RunnableTask task) throws InsufficientCapacityException;
+    public abstract CompletableFuture<Void> tryExecute(long key, RunnableTask task) throws InsufficientCapacityException;
 
     /**
      * @param key  task distribution key
@@ -105,7 +101,7 @@ public abstract class WorkerService implements AutoCloseable, Closeable {
      * @param <T>  generic type that specifies type of return value
      * @return {@link  java.util.concurrent.CompletableFuture}
      */
-    public abstract <T> CompletableFuture<T> execute(Integer key, CallableTask<T> task);
+    public abstract <T> CompletableFuture<T> execute(int key, CallableTask<T> task);
 
     /**
      * Executes task and returns CompletableFuture
@@ -115,7 +111,7 @@ public abstract class WorkerService implements AutoCloseable, Closeable {
      * @param <T>      generic type that specifies type of return value
      * @return {@link  java.util.concurrent.CompletableFuture}
      */
-    public abstract <T> CompletableFuture<T> execute(Long key, CallableTask<T> callable);
+    public abstract <T> CompletableFuture<T> execute(long key, CallableTask<T> callable);
 
     /**
      * Executes task and returns CompletableFuture
@@ -147,7 +143,7 @@ public abstract class WorkerService implements AutoCloseable, Closeable {
      * @return {@link  java.util.concurrent.CompletableFuture}
      * @throws InsufficientCapacityException when <code>RingBuffer</code> is full
      */
-    public abstract <T> CompletableFuture<T> tryExecute(Integer key, CallableTask<T> task) throws InsufficientCapacityException;
+    public abstract <T> CompletableFuture<T> tryExecute(int key, CallableTask<T> task) throws InsufficientCapacityException;
 
     /**
      * Executes task and returns CompletableFuture
@@ -158,7 +154,7 @@ public abstract class WorkerService implements AutoCloseable, Closeable {
      * @return {@link  java.util.concurrent.CompletableFuture}
      * @throws InsufficientCapacityException when <code>RingBuffer</code> is full
      */
-    public abstract <T> CompletableFuture<T> tryExecute(Long key, CallableTask<T> task) throws InsufficientCapacityException;
+    public abstract <T> CompletableFuture<T> tryExecute(long key, CallableTask<T> task) throws InsufficientCapacityException;
 
     /**
      * Executes task and returns CompletableFuture

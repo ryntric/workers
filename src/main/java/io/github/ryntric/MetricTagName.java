@@ -2,9 +2,8 @@ package io.github.ryntric;
 
 public enum MetricTagName {
     WORKER_NAME("worker_name", (byte) 0x1),
-    WORKER_TASK_COMPLETION_STATUS("worker_task_completion_status", (byte) 0x2),
-    WORKER_SERVICE_NAME("worker_service_name", (byte) 0x4),
-    WORKER_TASK_NAME("worker_task_name", (byte) 0x8);
+    WORKER_SERVICE_NAME("worker_service_name", (byte) 0x2),
+    WORKER_TASK_NAME("worker_task_name", (byte) 0x4);
 
     private final String value;
     private final byte flag;

@@ -9,12 +9,17 @@ final class NoopMetricService implements MetricService {
     }
 
     @Override
-    public void incrementTaskCount(MetricName name, CompletionTaskStatus status, MetricContext context) {
+    public MetricContext newMetricContext(String workerName, String taskName) {
+        return null;
+    }
+
+    @Override
+    public void incrementTaskCount(MetricName metricName, MetricContext context) {
 
     }
 
     @Override
-    public MetricTimerContext startTimer(MetricName name, MetricContext context) {
+    public MetricTimerContext startTimer(MetricName metricName, MetricContext context) {
         return null;
     }
 
@@ -24,9 +29,10 @@ final class NoopMetricService implements MetricService {
     }
 
     @Override
-    public void recordLatency(MetricName name, long latency, MetricContext context) {
+    public void recordLatency(MetricName metricName, long latency, MetricContext context) {
 
     }
+
 
     private static class InstanceHolder {
         private static final NoopMetricService INSTANCE = new NoopMetricService();
