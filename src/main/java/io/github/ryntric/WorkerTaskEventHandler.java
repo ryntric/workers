@@ -21,25 +21,26 @@ final class WorkerTaskEventHandler implements EventHandler<WorkerTaskEvent> {
         return thread.getName();
     }
 
+    private void execute(CompletableFuture future, WorkerTask task) {
+        try {
+            future.complete(task.execute());
+        } catch (Exception ex) {
+            future.completeExceptionally(ex);
+        }
+    }
+
     @Override
     public void onEvent(WorkerTaskEvent event, long sequence, boolean endOfBatch) {
-        WorkerTask task = event.getTask();
-        CompletableFuture future = event.getFuture();
-        MetricContext context = metrics.newMetricContext(getName(), task.getName());
-        metrics.recordLatency(WORKER_EXECUTION_TIME_LATENCY_MS, ClockUtil.diffMillis(task.getCreatedAt()), context);
-        MetricTimerContext metricTimerContext = metrics.startTimer(WORKER_TASK_EXECUTION_TIME_MS, context);
         if (!event.isCancelled()) {
-            try {
-                future.complete(task.execute());
-                metrics.incrementTaskCount(WORKER_FINISHED_TASKS_COUNT, context);
-            } catch (Exception ex) {
-                future.completeExceptionally(ex);
-                metrics.incrementTaskCount(WORKER_FINISHED_TASKS_COUNT, context);
-            }
-        } else {
+            WorkerTask task = event.getTask();
+            CompletableFuture future = event.getFuture();
+            MetricContext context = metrics.newMetricContext(getName(), task.getName());
+            metrics.recordLatency(WORKER_EXECUTION_TIME_LATENCY_MS, ClockUtil.diffMillis(task.getCreatedAt()), context);
+            MetricTimerContext metricTimerContext = metrics.startTimer(WORKER_TASK_EXECUTION_TIME_MS, context);
+            execute(future, task);
             metrics.incrementTaskCount(WORKER_FINISHED_TASKS_COUNT, context);
+            metrics.stopTimer(metricTimerContext);
         }
-        metrics.stopTimer(metricTimerContext);
         event.clear();
     }
 }
