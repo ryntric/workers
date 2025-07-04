@@ -10,7 +10,7 @@ import com.google.common.hash.HashFunction;
 
 final class ModuloNodeSelector extends WorkerNodeSelector {
     private final WorkerNode[] nodes;
-    private final int length;
+    private final long length;
 
     ModuloNodeSelector(HashFunction hashFunction, WorkerNode[] nodes) {
         super(hashFunction);
@@ -20,7 +20,7 @@ final class ModuloNodeSelector extends WorkerNodeSelector {
 
     @Override
     public WorkerNode getNode(long keyHashCode) {
-        int index = (int) (Math.abs(-keyHashCode) % length);
+        int index = (int) Math.abs(keyHashCode % length);
         return nodes[index];
     }
 }

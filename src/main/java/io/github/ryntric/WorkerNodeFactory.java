@@ -16,8 +16,8 @@ final class WorkerNodeFactory {
         RandomBasedGenerator generator = Generators.randomBasedGenerator();
         WorkerNode[] nodes = new WorkerNode[quantity * workers.size()];
         int idx = 0;
-        for (Disruptor<WorkerTaskEvent> worker : workers) {
-            for (int i = 0; i < quantity; i++) {
+        for (int i = 0; i < quantity; i++) {
+            for (Disruptor<WorkerTaskEvent> worker : workers) {
                 nodes[idx++] = new WorkerNode(String.format(WORKER_NODE_NAME_TEMPLATE, generator.generate(), idx), worker.getRingBuffer());
             }
         }
