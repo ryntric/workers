@@ -24,7 +24,7 @@ final class WorkerTaskEventHandler implements EventHandler<WorkerTaskEvent> {
     private void execute(CompletableFuture future, WorkerTask task) {
         try {
             future.complete(task.execute());
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             future.completeExceptionally(ex);
         }
     }
