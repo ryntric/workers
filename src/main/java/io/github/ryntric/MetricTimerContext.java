@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 
+@Deprecated
 final class MetricTimerContext {
     private final MetricName metricName;
     private final Tags tags;

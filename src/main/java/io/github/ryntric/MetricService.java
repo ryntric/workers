@@ -1,5 +1,6 @@
 package io.github.ryntric;
 
+@Deprecated
 interface MetricService {
 
     MetricContext newMetricContext(String workerName, String taskName);

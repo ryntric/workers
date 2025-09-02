@@ -1,5 +1,6 @@
 package io.github.ryntric;
 
+@Deprecated
 final class NoopMetricService implements MetricService {
     private NoopMetricService() {}
 

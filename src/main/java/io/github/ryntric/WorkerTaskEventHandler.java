@@ -8,6 +8,7 @@ import static io.github.ryntric.MetricName.WORKER_EXECUTION_TIME_LATENCY_MS;
 import static io.github.ryntric.MetricName.WORKER_FINISHED_TASKS_COUNT;
 import static io.github.ryntric.MetricName.WORKER_TASK_EXECUTION_TIME_MS;
 
+@Deprecated
 @SuppressWarnings({"unchecked", "rawtypes"})
 final class WorkerTaskEventHandler implements EventHandler<WorkerTaskEvent> {
     private final MetricService metrics;

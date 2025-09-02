@@ -4,6 +4,7 @@ import com.lmax.disruptor.EventTranslatorTwoArg;
 
 import java.util.concurrent.CompletableFuture;
 
+@Deprecated
 final class WorkerTaskEventTranslator implements EventTranslatorTwoArg<WorkerTaskEvent, WorkerTask<?>, CompletableFuture<?>> {
     public static final WorkerTaskEventTranslator INSTANCE = new WorkerTaskEventTranslator();
 

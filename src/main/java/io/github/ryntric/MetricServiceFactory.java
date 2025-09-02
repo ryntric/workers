@@ -1,5 +1,6 @@
 package io.github.ryntric;
 
+@Deprecated
 final class MetricServiceFactory {
     private MetricServiceFactory() {}
 

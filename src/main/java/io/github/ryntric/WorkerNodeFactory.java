@@ -6,6 +6,7 @@ import com.lmax.disruptor.dsl.Disruptor;
 
 import java.util.List;
 
+@Deprecated
 final class WorkerNodeFactory {
     private static final String WORKER_NODE_NAME_TEMPLATE = "%s-vwn-%d";
 

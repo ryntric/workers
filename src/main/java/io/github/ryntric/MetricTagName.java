@@ -1,5 +1,6 @@
 package io.github.ryntric;
 
+@Deprecated
 public enum MetricTagName {
     WORKER_NAME("worker_name", (byte) 0x1),
     WORKER_SERVICE_NAME("worker_service_name", (byte) 0x2),

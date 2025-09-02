@@ -12,6 +12,7 @@ import java.util.TreeMap;
  * time: 7:03 PM
  **/
 
+@Deprecated
 final class TWNodeSelector extends WorkerNodeSelector {
     private final NavigableMap<Long, WorkerNode> ring = new TreeMap<>();
 

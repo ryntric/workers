@@ -2,6 +2,7 @@ package io.github.ryntric;
 
 import io.micrometer.core.instrument.Tags;
 
+@Deprecated
 final class MetricTagCompositor {
     private final MetricConfig metricConfig;
     private Tags tags = Tags.empty();

@@ -6,6 +6,7 @@ import com.lmax.disruptor.dsl.ProducerType;
 
 import java.util.concurrent.ThreadFactory;
 
+@Deprecated
 final class DisruptorFactory {
     private final ThreadFactory threadFactory;
     private final MetricService metrics;

@@ -8,6 +8,7 @@ import com.google.common.hash.HashFunction;
  * time: 7:08 PM
  **/
 
+@Deprecated
 final class ModuloNodeSelector extends WorkerNodeSelector {
     private final WorkerNode[] nodes;
     private final long length;
