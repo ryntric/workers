@@ -6,6 +6,7 @@ import static io.github.ryntric.MetricTagName.WORKER_NAME;
 import static io.github.ryntric.MetricTagName.WORKER_SERVICE_NAME;
 import static io.github.ryntric.MetricTagName.WORKER_TASK_NAME;
 
+@Deprecated
 class MetricConfig {
     private byte features = (byte) (WORKER_NAME.flag() | WORKER_TASK_NAME.flag() | WORKER_SERVICE_NAME.flag());
     private MeterRegistry meterRegistry;

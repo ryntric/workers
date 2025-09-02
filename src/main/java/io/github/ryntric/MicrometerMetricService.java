@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.Timer;
 
 import java.util.concurrent.TimeUnit;
 
+@Deprecated
 final class MicrometerMetricService implements MetricService {
     private final MetricConfig metricConfig;
     private final String workerServiceName;

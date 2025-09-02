@@ -1,5 +1,6 @@
 package io.github.ryntric;
 
+@Deprecated
 public abstract class AbstractWorkerTask<R> implements WorkerTask<R> {
     private final Long createdAt = ClockUtil.inMillis();
 

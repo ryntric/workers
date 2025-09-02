@@ -1,5 +1,6 @@
 package io.github.ryntric;
 
+@Deprecated
 interface WorkerTask<R> {
     R execute();
 

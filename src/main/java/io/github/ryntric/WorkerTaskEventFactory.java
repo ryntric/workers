@@ -2,6 +2,7 @@ package io.github.ryntric;
 
 import com.lmax.disruptor.EventFactory;
 
+@Deprecated
 class WorkerTaskEventFactory implements EventFactory<WorkerTaskEvent> {
     public static final WorkerTaskEventFactory INSTANCE = new WorkerTaskEventFactory();
 

@@ -2,6 +2,7 @@ package io.github.ryntric;
 
 import java.time.Clock;
 
+@Deprecated
 public final class ClockUtil {
     private static final Clock clock = Clock.systemUTC();
 

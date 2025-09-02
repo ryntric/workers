@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Deprecated
 public final class DisruptorWorkerService extends WorkerService {
     private final List<Disruptor<WorkerTaskEvent>> workers;
     private final String name;

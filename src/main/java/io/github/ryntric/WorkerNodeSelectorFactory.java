@@ -8,6 +8,7 @@ import com.google.common.hash.HashFunction;
  * time: 7:20 PM
  **/
 
+@Deprecated
 final class WorkerNodeSelectorFactory {
     private WorkerNodeSelectorFactory() {}
 

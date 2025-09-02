@@ -5,6 +5,7 @@ import com.lmax.disruptor.RingBuffer;
 
 import java.util.concurrent.CompletableFuture;
 
+@Deprecated
 final class WorkerNode {
     private final String name;
     private final RingBuffer<WorkerTaskEvent> ringBuffer;

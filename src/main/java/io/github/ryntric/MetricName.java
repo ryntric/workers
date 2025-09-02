@@ -1,5 +1,6 @@
 package io.github.ryntric;
 
+@Deprecated
 enum MetricName {
     WORKER_TASK_EXECUTION_TIME_MS("worker_task_execution_time_ms"),
     WORKER_FINISHED_TASKS_COUNT("worker_finished_tasks_count"),

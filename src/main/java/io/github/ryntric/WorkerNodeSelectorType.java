@@ -6,6 +6,7 @@ package io.github.ryntric;
  * time: 7:00 PM
  **/
 
+@Deprecated
 public enum WorkerNodeSelectorType {
     TAIL_WRAP,
     MODULO,

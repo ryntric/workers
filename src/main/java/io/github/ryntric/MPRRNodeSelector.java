@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * time: 7:15 PM
  **/
 
+@Deprecated
 final class MPRRNodeSelector extends WorkerNodeSelector {
     private final WorkerNode[] nodes;
     private final int length;

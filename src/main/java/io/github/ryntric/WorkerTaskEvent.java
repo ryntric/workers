@@ -2,6 +2,7 @@ package io.github.ryntric;
 
 import java.util.concurrent.CompletableFuture;
 
+@Deprecated
 @SuppressWarnings("rawtypes")
 final class WorkerTaskEvent {
     private WorkerTask task;

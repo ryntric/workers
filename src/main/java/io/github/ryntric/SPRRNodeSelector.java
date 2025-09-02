@@ -8,6 +8,7 @@ import com.google.common.hash.HashFunction;
  * time: 7:11 PM
  **/
 
+@Deprecated
 final class SPRRNodeSelector extends WorkerNodeSelector {
     private final WorkerNode[] nodes;
     private final int length;
