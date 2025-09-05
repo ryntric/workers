@@ -1,61 +1,84 @@
 package io.github.ryntric;
 
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-import com.lmax.disruptor.BlockingWaitStrategy;
-import com.lmax.disruptor.WaitStrategy;
-import com.lmax.disruptor.dsl.ProducerType;
-import io.micrometer.core.instrument.MeterRegistry;
+import io.github.ryntric.util.Util;
+import io.github.ryntric.util.WorkerUtil;
 
+/**
+ * Configuration class for {@code WorkerService}.
+ * <p>
+ * Provides tunable parameters such as worker count, replica count,
+ * buffer size, sequencing strategy, and wait policies.
+ * <p>
+ * A default singleton instance is available via {@link #INSTANCE}.
+ * To create customized configurations, use the {@link Builder}.
+ */
 public final class WorkerServiceConfig {
-    private String name;
-    private int workerCount = WorkerUtil.getAvailableProcessors();
-    private int replicaCount = 200;
-    private HashFunction hashFunction = Hashing.murmur3_32_fixed();
-    private WaitStrategy waitStrategy = new BlockingWaitStrategy();
+    public static WorkerServiceConfig INSTANCE = new WorkerServiceConfig();
+
+    private int workerCount = WorkerUtil.getWorkerCount();
+    private int replicaCount = 400;
+    private WaitPolicy producerWaitPolicy = WaitPolicy.SPINNING;
+    private WaitPolicy consumerWaitPolicy = WaitPolicy.PARKING;
     private int bufferSize = 4096;
-    private ProducerType producerType = ProducerType.MULTI;
-    private WorkerNodeSelectorType selectorType = WorkerNodeSelectorType.MODULO;
-    private final MetricConfig metricConfig = new MetricConfig();
+    private SequencerType sequencerType = SequencerType.MULTI_PRODUCER;
+    private BatchSizeLimit limit = BatchSizeLimit._1_2;
 
     private WorkerServiceConfig() {}
 
-    public String getName() {
-        return name;
-    }
-
+    /**
+     * @return number of worker threads
+     */
     public int getWorkerCount() {
         return workerCount;
     }
 
+    /**
+     * @return number of replicas used for consistent hashing or partitioning
+     */
     public int getReplicaCount() {
         return replicaCount;
     }
 
-    public HashFunction getHashFunction() {
-        return hashFunction;
+    /**
+     * @return the wait policy used by producers when publishing events
+     */
+    public WaitPolicy getProducerWaitPolicy() {
+        return producerWaitPolicy;
     }
 
-    public WaitStrategy getWaitStrategy() {
-        return waitStrategy;
+    /**
+     * @return the wait policy used by consumers when waiting for events
+     */
+    public WaitPolicy getConsumerWaitPolicy() {
+        return consumerWaitPolicy;
     }
 
+    /**
+     * @return the size of the ring buffer
+     */
     public int getBufferSize() {
         return bufferSize;
     }
 
-    public ProducerType getProducerType() {
-        return producerType;
+    /**
+     * @return the sequencer type (e.g., single vs. multi-producer)
+     */
+    public SequencerType getSequencerType() {
+        return sequencerType;
     }
 
-    public WorkerNodeSelectorType getSelectorType() {
-        return selectorType;
+    /**
+     * @return the maximum batch size limit for event processing
+     */
+    public BatchSizeLimit getBatchSizeLimit() {
+        return limit;
     }
 
-    MetricConfig getMetricConfig() {
-        return metricConfig;
-    }
-
+    /**
+     * Creates a new builder for customizing {@code WorkerServiceConfig}.
+     *
+     * @return a new {@link Builder}
+     */
     public static Builder builder() {
         return new WorkerServiceConfig().new Builder();
     }
@@ -63,22 +86,10 @@ public final class WorkerServiceConfig {
     public class Builder {
 
         /**
-         * Sets name of the WorkerService
+         * Sets the number of worker threads.
          *
-         * @param name name of the WorkerService
-         * @return this
-         */
-        public Builder name(String name) {
-            WorkerServiceConfig.this.name = name;
-            return this;
-        }
-
-
-        /**
-         * Sets worker count
-         *
-         * @param workerCount count of workers
-         * @return this
+         * @param workerCount number of workers
+         * @return this builder
          */
         public Builder workerCount(int workerCount) {
             WorkerServiceConfig.this.workerCount = workerCount;
@@ -86,10 +97,10 @@ public final class WorkerServiceConfig {
         }
 
         /**
-         * Sets replicaCount that will be used for each worker
+         * Sets the number of replicas.
          *
          * @param replicaCount replica count
-         * @return this
+         * @return this builder
          */
         public Builder replicaCount(int replicaCount) {
             WorkerServiceConfig.this.replicaCount = replicaCount;
@@ -97,97 +108,65 @@ public final class WorkerServiceConfig {
         }
 
         /**
-         * Sets the hash function that is used for calculating the hash of a task key
+         * Sets the wait policy for producers.
          *
-         * @param hashFunction - hash function. To read more, follow to {@link com.google.common.hash.HashFunction}
-         * @return this
+         * @param waitPolicy producer wait policy
+         * @return this builder
          */
-        public Builder hashFunction(HashFunction hashFunction) {
-            WorkerServiceConfig.this.hashFunction = hashFunction;
+        public Builder producerWaitPolicy(WaitPolicy waitPolicy) {
+            WorkerServiceConfig.this.producerWaitPolicy = waitPolicy;
             return this;
         }
 
         /**
-         * Sets meter registry of micrometer
+         * Sets the wait policy for consumers.
          *
-         * @param meterRegistry - meter register
-         * @return this
+         * @param waitPolicy consumer wait policy
+         * @return this builder
          */
-        public Builder meterRegistry(MeterRegistry meterRegistry) {
-            WorkerServiceConfig.this.metricConfig.setMeterRegistry(meterRegistry);
+        public Builder consumerWaitPolicy(WaitPolicy waitPolicy) {
+            WorkerServiceConfig.this.consumerWaitPolicy = waitPolicy;
             return this;
         }
 
         /**
-         * Sets a wait strategy that is used for waiting for some event when the task buffer is either full or empty
+         * Sets the sequencer type for the ring buffer.
          *
-         * @param waitStrategy wait strategy. To read more follow to {@link com.lmax.disruptor.WaitStrategy}
-         * @return this
+         * @param sequencerType sequencer type
+         * @return this builder
          */
-        public Builder waitStrategy(WaitStrategy waitStrategy) {
-            WorkerServiceConfig.this.waitStrategy = waitStrategy;
+        public Builder sequencerType(SequencerType sequencerType) {
+            WorkerServiceConfig.this.sequencerType = sequencerType;
             return this;
         }
 
         /**
-         * Sets a task buffer size for each worker. Note that the buffer size should be a power of 2, e.g., 512, 1024, 2048, 4096, etc.
+         * Sets the batch size limit.
+         *
+         * @param batchSizeLimit batch size limit
+         * @return this builder
+         */
+        public Builder batchSizeLimit(BatchSizeLimit batchSizeLimit) {
+            WorkerServiceConfig.this.limit = batchSizeLimit;
+            return this;
+        }
+
+        /**
+         * Sets the ring buffer size. Must be pow of 2
          *
          * @param bufferSize buffer size
-         * @return this
+         * @return this builder
          */
         public Builder bufferSize(int bufferSize) {
-            WorkerServiceConfig.this.bufferSize = bufferSize;
+            WorkerServiceConfig.this.bufferSize = Util.assertThatPowerOfTwo(bufferSize);
             return this;
         }
 
         /**
-         * Enables a metric tag
+         * Builds the configured {@link WorkerServiceConfig} instance.
          *
-         * @param tags metric tags
-         * @return this
+         * @return the configured {@link WorkerServiceConfig}
          */
-        public Builder enableMetricTags(MetricTagName... tags) {
-            for (MetricTagName tag : tags) {
-                WorkerServiceConfig.this.metricConfig.enableTag(tag);
-            }
-            return this;
-        }
-
-        /**
-         * Disables a metric tag
-         *
-         * @param tags metric tags
-         * @return this
-         */
-        public Builder disableMetricTags(MetricTagName... tags) {
-            for (MetricTagName tag : tags) {
-                WorkerServiceConfig.this.metricConfig.disableTag(tag);
-            }
-            return this;
-        }
-
-        /**
-         * Specifies type of producer, for detail information see {@link  ProducerType}
-         *
-         * @param producerType - type of producer
-         * @return this
-         */
-        public Builder producerType(ProducerType producerType) {
-            WorkerServiceConfig.this.producerType = producerType;
-            return this;
-        }
-
-        /**
-         * Specifies type of selector
-         *
-         * @param selectorType - an enum value that specifies selector type
-         * @return this
-         */
-        public Builder selectorType(WorkerNodeSelectorType selectorType) {
-            WorkerServiceConfig.this.selectorType = selectorType;
-            return this;
-        }
-
         public WorkerServiceConfig build() {
             return WorkerServiceConfig.this;
         }
