@@ -1,3 +1,4 @@
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.ryntric/workers.svg)](https://search.maven.org/artifact/io.github.ryntric/workers)
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ryntric/workers/blob/master/LICENSE)
 [![Maven CI](https://github.com/ryntric/workers/actions/workflows/maven-build.yml/badge.svg)](https://github.com/ryntric/workers/actions/workflows/maven-build.yml)
 [![pages-build-deployment](https://github.com/ryntric/workers/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/ryntric/workers/actions/workflows/pages/pages-build-deployment)
