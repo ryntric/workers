@@ -1,32 +1,51 @@
 package io.github.ryntric;
 
-import com.lmax.disruptor.InsufficientCapacityException;
-import com.lmax.disruptor.RingBuffer;
+import io.github.ryntric.EventTranslator.EventTranslatorFiveArg;
 
-import java.util.concurrent.CompletableFuture;
+public final class WorkerNode<T> {
+    private final Worker<T> worker;
 
-@Deprecated
-final class WorkerNode {
-    private final String name;
-    private final RingBuffer<WorkerTaskEvent> ringBuffer;
-
-    WorkerNode(String name, RingBuffer<WorkerTaskEvent> ringBuffer) {
-        this.name = name;
-        this.ringBuffer = ringBuffer;
+    public WorkerNode(Worker<T> worker) {
+        this.worker = worker;
     }
 
-    void execute(WorkerTask<?> workerTask, CompletableFuture<?> future) {
-        ringBuffer.publishEvent(WorkerTaskEventTranslator.INSTANCE, workerTask, future);
+    public <A> void publishEvent(EventTranslator.EventTranslatorOneArg<T, A> translator, A arg) {
+        worker.publishEvent(translator, arg);
     }
 
-    void tryExecute(WorkerTask<?> workerTask, CompletableFuture<?> future) throws InsufficientCapacityException {
-        long sequence = ringBuffer.tryNext();
-        WorkerTaskEventTranslator.INSTANCE.translateTo(ringBuffer.get(sequence), sequence, workerTask, future);
-        ringBuffer.publish(sequence);
+    public <A> void publishEvents(EventTranslator.EventTranslatorOneArg<T, A> translator, A[] args) {
+        worker.publishEvents(translator, args);
     }
 
-    String getName() {
-        return name;
+    public <A, B> void publishEvent(EventTranslator.EventTranslatorTwoArg<T, A, B> translator, A arg0, B arg1) {
+        worker.publishEvent(translator, arg0, arg1);
     }
 
+    public <A, B> void publishEvents(EventTranslator.EventTranslatorTwoArg<T, A, B> translator, A[] arg0, B[] arg1) {
+        worker.publishEvents(translator, arg0, arg1);
+    }
+
+    public <A, B, C> void publishEvent(EventTranslator.EventTranslatorThreeArg<T, A, B, C> translator, A arg0, B arg1, C arg2) {
+        worker.publishEvent(translator, arg0, arg1, arg2);
+    }
+
+    public <A, B, C> void publishEvents(EventTranslator.EventTranslatorThreeArg<T, A, B, C> translator, A[] arg0, B[] arg1, C[] arg2) {
+        worker.publishEvents(translator, arg0, arg1, arg2);
+    }
+
+    public <A, B, C, D> void publishEvent(EventTranslator.EventTranslatorFourArg<T, A, B, C, D> translator, A arg0, B arg1, C arg2, D arg3) {
+        worker.publishEvent(translator, arg0, arg1, arg2, arg3);
+    }
+
+    public <A, B, C, D> void publishEvents(EventTranslator.EventTranslatorFourArg<T, A, B, C, D> translator, A[] arg0, B[] arg1, C[] arg2, D[] arg3) {
+        worker.publishEvents(translator, arg0, arg1, arg2, arg3);
+    }
+
+    public <A, B, C, D, E> void publishEvent(EventTranslatorFiveArg<T, A, B, C, D, E> translator, A arg0, B arg1, C arg2, D arg3, E arg4) {
+        worker.publishEvent(translator, arg0, arg1, arg2, arg3, arg4);
+    }
+
+    public <A, B, C, D, E> void publishEvents(EventTranslatorFiveArg<T, A, B, C, D, E> translator, A[] arg0, B[] arg1, C[] arg2, D[] arg3, E[] arg4) {
+        worker.publishEvents(translator, arg0, arg1, arg2, arg3, arg4);
+    }
 }

@@ -17,7 +17,7 @@ Example of usage:
 import io.github.ryntric.ClockUtil;
 import io.github.ryntric.DisruptorWorkerService;
 import io.github.ryntric.RunnableTask;
-import io.github.ryntric.WorkerService;
+import io.github.ryntric.WorkerCompletableEventService;
 import io.github.ryntric.WorkerServiceConfig;
 
 import java.io.IOException;
